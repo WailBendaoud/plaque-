@@ -1,0 +1,75 @@
+{
+  "_id": ObjectId("6910799316a062e528f8580a"),
+  "nom": "Avenue ",
+  "longueur": 1200.5,
+  "largeur": 20.0,
+  "nbVoies": 4,
+  "ville": "Casablanca",
+  "codePostal": "20000",
+  "coordonnees": "33.5731, -7.5898",
+  "radars": [
+    {
+      "typeRadar": "Fixe",
+      "vitesseMax": 80.0,
+      "position": "Position 1",
+      "infractions": [
+        {
+          "vitesse": 90.0,
+          "date": "2025-11-30T12:00:00Z",
+          "degres": "GRAVE",
+          "idVehicule": ObjectId("691079df16a062e528f8580b") 
+        }]}],
+  "feux": [
+    {
+      "etat": "VERT",
+      "dureeVert": 60,
+      "dureeOrange": 5,
+      "dureeRouge": 55,
+      "position": "Intersection 1"
+    }],
+    
+  "stationsBus": [
+    {
+      "nomStation": "Station Bus 1",
+      "localisation": "Coord Bus Station"
+    }
+  ],
+    "stations": [
+    {
+      "nomStation": "Station 1",
+      "localisation": "Coord Station",
+      "prixLitreEssence": 12.0,
+      "prixLitreEssencePremium": 14.0,
+      "prixLitreDieselPremium": 13.0,
+      "bornes": [
+        {
+          "typePrise": "Type2",
+          "puissanceKW": 22.0,
+          "etat": "DISPONIBLE",
+          "localisation": "Emplacement 1",
+          "tarifParHeure": 5.0
+        }
+      ]
+    }
+  ],
+   "cameras": [
+    {
+      "modele": "Cam Model 1",
+      "angleVision": 120.0,
+      "resolution": "1080p",
+      "emplacement": "Emplacement 1",
+      "etat": "ACTIVE"
+    }],
+    "capteurs": [
+    {
+      "emplacement": "Capteur 1",
+      "etat": "ACTIVE",
+      "idType": ObjectId("69107a4f16a062e528f8580c") 
+    }],
+    "parkings": [
+    ObjectId("69107a4f16a062e528f8588p")  
+  ]
+}
+
+
+
