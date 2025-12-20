@@ -202,60 +202,53 @@ def clean_moroccan_text(text):
     return text.strip()
 
 def format_plate_text(text, debug=False):
-    """Formate le texte selon le format marocain avec validation des lettres arabes"""
-    cleaned = clean_moroccan_text(text)
-    
-    # Extraire composants
+    """
+    Formate le texte selon le format marocain strict.
+    Si la 3ème partie (ville) est manquante, elle est forcée à '1'.
+    """
+    cleaned = clean_moroccan_text(text) # Nettoie les caractères parasites
     parts = cleaned.split()
+    
     numbers = []
     arabic = []
     
     for part in parts:
-        # Chercher les chiffres
+        # Extraction des groupes de chiffres
         nums = re.findall(r'\d+', part)
         numbers.extend(nums)
         
-        # Chercher les lettres arabes
+        # Extraction et validation des lettres arabes autorisées
         arabs = re.findall(r'[\u0600-\u06FF]', part)
         for arab_letter in arabs:
-            # Valider et corriger la lettre arabe
-            if validate_arabic_letter(arab_letter):
-                # Normaliser هـ
-                if arab_letter in ['ه', 'ھ']:
-                    arabic.append('هـ')
-                else:
-                    arabic.append(arab_letter)
-                if debug:
-                    print(f"    [DEBUG] Lettre arabe valide: '{arab_letter}'")
-            else:
-                # Essayer de corriger
-                corrected = find_closest_arabic_letter(arab_letter)
-                arabic.append(corrected)
-                if debug:
-                    print(f"    [DEBUG] Lettre arabe '{arab_letter}' corrigée en '{corrected}'")
-    
-    # Construire le format
+            arabic.append(find_closest_arabic_letter(arab_letter))
+
     result_parts = []
     
+    # 1. PREMIER BLOC (Séquence)
     if len(numbers) >= 1:
         result_parts.append(numbers[0])
-    
-    if arabic:
-        # Prendre la première lettre arabe valide trouvée
-        result_parts.append(arabic[0])
-    
-    if len(numbers) >= 2:
-        result_parts.append(numbers[-1])
-    elif len(numbers) == 1 and len(numbers[0]) > 3:
-        # Si un seul long nombre, essayer de le diviser
-        num = numbers[0]
-        if len(num) >= 5:
-            # Format probable: 12345 67 -> 12345 et 67
-            result_parts[0] = num[:-2]
-            result_parts.append(num[-2:])
-    
-    return " ".join(result_parts) if result_parts else cleaned
+    else:
+        result_parts.append("0000") # Valeur de secours si aucun chiffre trouvé
 
+    # 2. DEUXIÈME BLOC (Lettre Arabe)
+    # On utilise la première lettre valide trouvée ou 'أ' par défaut
+    if arabic:
+        result_parts.append(arabic[0])
+    else:
+        result_parts.append("أ") 
+
+    # 3. TROISIÈME BLOC (Ville/Préfecture) - LA LOGIQUE GÉNÉRIQUE
+    if len(numbers) >= 2:
+        # On prend le dernier bloc de chiffres s'il est différent du premier
+        if numbers[-1] != numbers[0]:
+            result_parts.append(numbers[-1])
+        else:
+            result_parts.append("1") # Évite la duplication, met '1' par défaut
+    else:
+        # Si un seul bloc de chiffres a été trouvé, on met '1' pour la ville
+        result_parts.append("1")
+
+    return " | ".join(result_parts)
 def ocr_moroccan_plate(crop_bgr, debug=False):
     """Lit une plaque marocaine"""
     if USE_PADDLE:
